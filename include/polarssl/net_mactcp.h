@@ -1,3 +1,6 @@
+#ifndef NET_MACTCP_H
+#define NET_MACTCP_H
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
@@ -32,3 +35,4 @@ int mactcp_recv(void *vc, unsigned char *inbuf, size_t len);
 OSErr mactcp_recv(mactcp_conn *c, char *inbuf, size_t len);*/
 OSErr mactcp_connect(mactcp_inst *i, mactcp_conn *c, char *hostname, short port);
 OSErr mactcp_init(mactcp_inst *i);
+#endif

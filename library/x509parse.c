@@ -73,8 +73,13 @@
 #if defined(POLARSSL_FS_IO)
 #include <stdio.h>
 #if !defined(_WIN32)
+#ifdef macintosh
+#include <Files.h>
+#include <TextUtils.h>
+#else
 #include <sys/types.h>
 #include <dirent.h>
+#endif
 #endif
 #endif
 
@@ -1939,6 +1944,54 @@ int x509parse_crtpath( x509_cert *chain, const char *path )
 cleanup:
     FindClose( hFind );
 #else
+#ifdef macintosh
+	int t_ret;
+	OSErr err;
+	StringPtr pdir;
+	CInfoPBRec di, fi;
+	Str31 filename;
+	char entry_name[4096];
+	short i;
+	
+	pdir = c2pstr((char *)path);
+	di.dirInfo.ioCompletion = NULL;
+	di.dirInfo.ioNamePtr = pdir;
+	di.dirInfo.ioVRefNum = 0;
+	di.dirInfo.ioFDirIndex = 0;
+	di.dirInfo.ioDrDirID = 0;
+	
+	err = PBGetCatInfoSync(&di);
+	p2cstr(pdir);
+	
+	if(err != noErr || !(di.dirInfo.ioFlAttrib & ioDirMask))
+		return POLARSSL_ERR_X509_FILE_IO_ERROR;
+	
+	fi.hFileInfo.ioCompletion = NULL;
+	fi.hFileInfo.ioNamePtr = filename;
+	fi.hFileInfo.ioVRefNum = di.dirInfo.ioVRefNum;
+	
+	for(i = 1; i <= di.dirInfo.ioDrNmFls; i++) {
+		fi.hFileInfo.ioFDirIndex = i;
+		fi.hFileInfo.ioDirID = di.dirInfo.ioDrDirID;
+		
+		err = PBGetCatSyncInfo(&fi);
+		p2cstr(filename);
+		
+		if(fi.hFileInfo.ioFlAttrib & ioDirMask)
+			continue;
+			
+		snprintf(entry_name, sizeof(entry_name), "%s:%s", path, filename);
+		t_ret = x509parse_crtfile(chain, entry_name);
+		if(t_ret < 0)
+		{
+			ret = t_ret;
+			break;
+		}
+		
+		ret += t_ret;
+		break;
+	}	
+#else
     int t_ret;
     struct dirent *entry;
     char entry_name[255];
@@ -1963,6 +2016,7 @@ cleanup:
         ret += t_ret;
     }
     closedir( dir );
+#endif
 #endif
 
     return( ret );

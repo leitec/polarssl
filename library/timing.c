@@ -42,15 +42,21 @@ struct _hr_time
 #else
 
 #include <unistd.h>
+#ifndef macintosh
 #include <sys/types.h>
 #include <sys/time.h>
+#endif
 #include <signal.h>
 #include <time.h>
 
+#ifdef macintosh
+#include <Timer.h>
+#else
 struct _hr_time
 {
     struct timeval start;
 };
+#endif
 
 #endif
 
@@ -91,6 +97,39 @@ unsigned long hardclock( void )
     unsigned long lo, hi;
     asm( "rdtsc" : "=a" (lo), "=d" (hi) ); 
     return( lo | (hi << 32) );
+}
+#endif
+
+#if !defined(POLARSSL_HAVE_HARDCLOCK) && defined(POLARSSL_HAVE_ASM) && \
+	defined(__MWERKS__) && defined(__powerc)
+
+#define POLARSSL_HAVE_HARDCLOCK
+
+asm unsigned long hardclock(void)
+{
+	machine	603
+foo:
+	mftbu	r4
+	mftb	r3
+	mftbu	r5
+	cmpw	r4, r5
+	bne-	foo
+	blr
+}
+#endif
+
+#if !defined(POLARSSL_HAVE_HARDCLOCK) && defined(POLARSSL_HAVE_ASM) && \
+	defined(__MWERKS__) && !defined(__powerc)
+	
+#define POLARSSL_HAVE_HARDCLOCK
+
+unsigned long hardclock(void)
+{
+	UnsignedWide sTime;
+	
+	Microseconds(&sTime);
+	
+	return sTime.lo;
 }
 #endif
 
@@ -257,6 +296,10 @@ void m_sleep( int milliseconds )
 
 unsigned long get_timer( struct hr_time *val, int reset )
 {
+#ifdef macintosh
+	/* not yet */
+	return 0;
+#else
     unsigned long delta;
     struct timeval offset;
     struct _hr_time *t = (struct _hr_time *) val;
@@ -273,6 +316,7 @@ unsigned long get_timer( struct hr_time *val, int reset )
     }
 
     return( delta );
+#endif
 }
 
 #if defined(INTEGRITY)
@@ -285,25 +329,46 @@ void m_sleep( int milliseconds )
 
 static void sighandler( int signum )
 {   
+#ifdef macintosh
+	/* not yet */
+#else
     alarmed = 1;
     signal( signum, sighandler );
+#endif
 }
 
 void set_alarm( int seconds )
 {
+#ifdef macintosh
+	/* not yet */
+#else
     alarmed = 0;
     signal( SIGALRM, sighandler );
     alarm( seconds );
+#endif
 }
 
 void m_sleep( int milliseconds )
 {
+#ifdef macintosh
+	UnsignedWide timestart, timecheck;
+	UInt32 i_start, i_check;
+	
+	Microseconds(&timestart);
+	i_start = timestart.lo;
+	
+	do {
+		Microseconds(&timecheck);
+		i_check = timecheck.lo;
+	} while(i_check < i_start+(milliseconds*1000));
+#else
     struct timeval tv;
 
     tv.tv_sec  = milliseconds / 1000;
     tv.tv_usec = milliseconds * 1000;
 
     select( 0, NULL, NULL, NULL, &tv );
+#endif
 }
 #endif /* INTEGRITY */
 

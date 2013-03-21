@@ -35,6 +35,18 @@
 #define _CRT_SECURE_NO_DEPRECATE 1
 #endif
 
+#if defined(macintosh) && defined(__MWERKS__)
+/*
+ * CodeWarrior Pro 1: we use a small compatibility library
+ * I wrote called 'libcompat' to provide things like C99 types,
+ * snprintf, strcasecmp, etc. that MSL doesn't provide
+ */
+#include <libcompat.h>
+
+#define __BYTE_ORDER 1
+#define __BIG_ENDIAN 1
+#endif
+
 /**
  * \name SECTION: System support
  *
@@ -208,8 +220,8 @@
  * standards like the /dev/urandom or Windows CryptoAPI.
  *
  * Uncomment this macro to disable the built-in platform entropy functions.
-#define POLARSSL_NO_PLATFORM_ENTROPY
  */
+#define POLARSSL_NO_PLATFORM_ENTROPY
 
 /**
  * \def POLARSSL_PKCS1_V21
@@ -655,7 +667,7 @@
  *
  * This module provides TCP/IP networking routines.
  */
-#define POLARSSL_NET_C
+#undef POLARSSL_NET_C
 
 /**
  * \def POLARSSL_PADLOCK_C
