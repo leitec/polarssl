@@ -21,6 +21,6 @@ The later stages of development were done under Classic on MacOS X Tiger. This i
 
     find . -type f -name \*.[ch] -print0 | xargs -0 /Developer/Tools/SetFile -c CWIE -t TEXT
 
-This sets the file type and creator type so that CodeWarrior can edit it. Each file can be set to Mac or UNIX-style line feeds, so to make things easier we use UNIX-style for everthing.
+This sets the file type and creator type so that CodeWarrior can edit it. In CW each file can be set to Mac or UNIX-style line feeds, so to make things easier we use UNIX-style for everthing.
 
 I think that's it for now. Let me know if you are the other person in the world that is interested in classic MacOS development.
