@@ -6,7 +6,7 @@ PolarSSL for Classic MacOS
 
 This is a port of the PolarSSL library to the classic MacOS. Since it uses MacTCP for sockets it may work as far back as System 6, but the earliest I've tested is 7.5.5. The compiler is CodeWarrior Pro 1, and being that it's from 1997 there are some things missing and some incompatibilities I had to work around. However, PolarSSL is very portable and so the changes were small for the most part.
 
-Some of the incompatibilities are handled through a library of mine, leitec/libcompat, which provides basic C99 integer types and a few functions missing in CodeWarrior Pro 1's MSL.
+Some of the incompatibilities are handled through a library of mine, [libcompat](/leitec/libcompat), which provides basic C99 integer types and a few functions missing in CodeWarrior Pro 1's MSL.
 
 Mac-specific things:
 - [x] MacTCP client sockets using our `net_mactcp` module
