@@ -8,7 +8,8 @@ This is a port of the PolarSSL library to the classic MacOS. Since it uses MacTC
 
 Some of the incompatibilities are handled through a library of mine, [libcompat](https://github.com/leitec/libcompat), which provides basic C99 integer types and a few functions missing in CodeWarrior Pro 1's MSL.
 
-Mac-specific things:
+Mac-specific things
+-------------------
 - [x] MacTCP client sockets using our `net_mactcp` module
 - [x] MacOS-specific file handling for X509 certs (untested; may have problems with ':' separators instead of '/')
 - [x] HAVEGE using processor ticks for PowerPC (may need 603 or higher) or OS ticks for 68k. No analysis has been done to determine if this is random enough.
