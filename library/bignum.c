@@ -49,6 +49,14 @@
 #define BITS_TO_LIMBS(i)  (((i) + biL - 1) / biL)
 #define CHARS_TO_LIMBS(i) (((i) + ciL - 1) / ciL)
 
+#if defined(macintosh) && defined(__powerc)
+asm void mpi_mul_hlp_powerpc_gcc(size_t i, t_uint *s, t_uint *d, t_uint b);
+#define mpi_mul_hlp mpi_mul_hlp_powerpc_gcc
+#else
+void mpi_mul_hlp_c(size_t i, t_uint *s, t_uint *d, t_uint b);
+#define mpi_mul_hlp mpi_mul_hlp_c
+#endif
+
 /*
  * Initialize one MPI
  */
@@ -935,7 +943,7 @@ int mpi_sub_int( mpi *X, const mpi *A, t_sint b )
 /*
  * Helper for mpi multiplication
  */ 
-static void mpi_mul_hlp( size_t i, t_uint *s, t_uint *d, t_uint b )
+static void mpi_mul_hlp_c( size_t i, t_uint *s, t_uint *d, t_uint b )
 {
     t_uint c = 0, t = 0;
 
