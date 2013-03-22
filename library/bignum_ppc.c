@@ -12,14 +12,12 @@
  * several different functions to support ASM
  * bignum and may be more efficient.
  *
- * I don't know what CW's default alignment is, so this may
- * be sub-optimal depending on what GCC sets. I'll have to look
- * into that sometime.
- *
- * I only had to change any use of r2, since CW/MacOS
- * doesn't like that. It's now r12. I also removed the
- * part at the beginning that loads the parameters, since
- * CW sets that up for us.
+ * Notes: I had to change any use of r2, since CW/MacOS
+ * doesn't like that (r2 is RTOC in MacOS). It's now r12.
+ * I also removed the part at the beginning that loads the
+ * parameters, since CW sets that up for us. 'srwi' was
+ * replaced with its 'rlwinm' equivalent since PPCAsm
+ * doesn't seem to know about it.
  */
 
 asm void mpi_mul_hlp_powerpc_gcc(size_t i, t_uint *s, t_uint *d, t_uint b);
