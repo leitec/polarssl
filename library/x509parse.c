@@ -1974,7 +1974,7 @@ cleanup:
 		fi.hFileInfo.ioFDirIndex = i;
 		fi.hFileInfo.ioDirID = di.dirInfo.ioDrDirID;
 		
-		err = PBGetCatSyncInfo(&fi);
+		err = PBGetCatInfoSync(&fi);
 		p2cstr(filename);
 		
 		if(fi.hFileInfo.ioFlAttrib & ioDirMask)
