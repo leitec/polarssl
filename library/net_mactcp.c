@@ -1,3 +1,20 @@
+/*
+ * This is based on code I wrote for my library 'imcomm' around 2005,
+ * which was itself based on some unfinished code in PuTTY source.
+ * I'm not sure where this places this code license-wise.
+ *
+ * To use with PolarSSL:
+ * - need two structures, mactcp_inst and mactcp_conn
+ * - need to run mactcp_init() on your mactcp_inst to load MacTCP
+ *   this is needed only once per program, no matter how many sockets
+ *   or connections are done.
+ * - mactcp_connect() and everything else uses mactcp_conn to keep
+ *   track of specific connections
+ * - important: must close all connections; leaving open connections
+ *   and quitting the program may result in crashes. (use mactcp_close())
+ * - mactcp_send() and mactcp_recv() work like in BSD sockets.
+ */
+
 #include "polarssl/net_mactcp.h"
 #include "polarssl/net.h"
 
