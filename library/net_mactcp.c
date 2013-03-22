@@ -3,16 +3,25 @@
  * which was itself based on some unfinished code in PuTTY source.
  * I'm not sure where this places this code license-wise.
  *
- * To use with PolarSSL:
+ * To use:
  * - need two structures, mactcp_inst and mactcp_conn
  * - need to run mactcp_init() on your mactcp_inst to load MacTCP
  *   this is needed only once per program, no matter how many sockets
- *   or connections are done.
+ *   or connections are done. This may be a global, since you'll need it
+ *   anytime you do a mactcp_connect() (but not send/recv since a pointer
+ *   is kept after mactcp_connect())
  * - mactcp_connect() and everything else uses mactcp_conn to keep
  *   track of specific connections
  * - important: must close all connections; leaving open connections
  *   and quitting the program may result in crashes. (use mactcp_close())
  * - mactcp_send() and mactcp_recv() work like in BSD sockets.
+ *
+ * To use with PolarSSL:
+ * - use ssl_set_bio(<ssl context>, mactcp_recv, &mc,
+ *                                  mactcp_send, &mc);
+ *   where mc is your mactcp_conn struct.
+ * - use mactcp_connect(), mactcp_close(), etc. instead of
+ *   net_connect(), net_close()
  */
 
 #include "polarssl/net_mactcp.h"
