@@ -12,7 +12,7 @@ Mac-specific things:
 - [x] MacTCP client sockets using our `net_mactcp` module
 - [x] MacOS-specific file handling for X509 certs (untested; may have problems with ':' separators instead of '/')
 - [x] HAVEGE using processor ticks for PowerPC (may need 603 or higher) or OS ticks for 68k. No analysis has been done to determine if this is random enough.
-- [x] ASM-accelerated bignum on PowerPC
+- [x] ASM-accelerated bignum on PowerPC (not yet committed)
 - [ ] ASM-accelerated bignum on 68k
 - [ ] MacTCP server sockets
 - [ ] timing stuff (alarms, etc.) that I'm not sure are used for anything other than benchmarks
