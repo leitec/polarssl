@@ -22,6 +22,8 @@
  *   where mc is your mactcp_conn struct.
  * - use mactcp_connect(), mactcp_close(), etc. instead of
  *   net_connect(), net_close()
+ *
+ * -- leitec, 2013
  */
 
 #include "polarssl/net_mactcp.h"
