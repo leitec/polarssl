@@ -233,3 +233,10 @@ OSErr mactcp_init(mactcp_inst *i)
 
 	return noErr;
 }
+
+OSErr mactcp_shutdown(mactcp_inst *i)
+{
+    CloseResolver();
+
+    return noErr;
+}

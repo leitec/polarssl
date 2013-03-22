@@ -35,4 +35,5 @@ int mactcp_recv(void *vc, unsigned char *inbuf, size_t len);
 OSErr mactcp_recv(mactcp_conn *c, char *inbuf, size_t len);*/
 OSErr mactcp_connect(mactcp_inst *i, mactcp_conn *c, char *hostname, short port);
 OSErr mactcp_init(mactcp_inst *i);
+OSErr mactcp_shutdown(mactcp_inst *i);
 #endif
