@@ -3,7 +3,7 @@
 #include "polarssl/bignum.h"
 #include "polarssl/bn_mul.h"
 
-#if defined(macintosh) && defined(__powerc)
+#if defined(macintosh) && defined(__powerc) && defined(__MWERKS__)
 /*
  * CW Pro 1 doesn't have inline assembly support.
  * This is mpi_mul_hlp as compiled by gcc on Tiger,

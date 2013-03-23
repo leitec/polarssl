@@ -49,7 +49,7 @@
 #define BITS_TO_LIMBS(i)  (((i) + biL - 1) / biL)
 #define CHARS_TO_LIMBS(i) (((i) + ciL - 1) / ciL)
 
-#if defined(macintosh) && defined(__powerc)
+#if defined(macintosh) && defined(__powerc) && defined(__MWERKS__)
 asm void mpi_mul_hlp_powerpc_gcc(size_t i, t_uint *s, t_uint *d, t_uint b);
 #define mpi_mul_hlp mpi_mul_hlp_powerpc_gcc
 #else
