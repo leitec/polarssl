@@ -221,7 +221,9 @@
  *
  * Uncomment this macro to disable the built-in platform entropy functions.
  */
+#ifdef macintosh
 #define POLARSSL_NO_PLATFORM_ENTROPY
+#endif
 
 /**
  * \def POLARSSL_PKCS1_V21
@@ -667,7 +669,9 @@
  *
  * This module provides TCP/IP networking routines.
  */
-#undef POLARSSL_NET_C
+#ifndef macintosh
+#define POLARSSL_NET_C
+#endif
 
 /**
  * \def POLARSSL_PADLOCK_C
