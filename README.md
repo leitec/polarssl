@@ -24,8 +24,6 @@ The later stages of development were done under Classic on MacOS X Tiger. This i
 
 This sets the file type and creator type so that CodeWarrior can edit it. In CW each file can be set to Mac or UNIX-style line feeds, so to make things easier we use UNIX-style for everthing.
 
-I think that's it for now. Let me know if you are the other person in the world that is interested in classic MacOS development.
-
 **Randomness and Entropy**
 
 This port uses PolarSSL's built-in entropy routines, which use the [HAVEGE](http://www.irisa.fr/caps/projects/hipsor/) RNG and some sort of tick counter (which HAVEGE also uses). On platforms that support it the platform's native PRNG is also used, but MacOS does not have such a facility.
