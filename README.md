@@ -28,7 +28,7 @@ This sets the file type and creator type so that CodeWarrior can edit it. In CW 
 
 This port uses PolarSSL's built-in entropy routines, which use the [HAVEGE](http://www.irisa.fr/caps/projects/hipsor/) RNG and some sort of tick counter (which HAVEGE also uses). On platforms that support it the platform's native PRNG is also used, but MacOS does not have such a facility.
 
-I am not a crypto expert by any means, but I believe there is sufficient entropy to make this port reasonably secure. Tests using [ent](http://www.fourmilab.ch/random/) on 1MB of random data are within recommended values:
+I am not a crypto expert by any means, but I believe there is sufficient entropy to make this port reasonably secure. Tests using [ent](http://www.fourmilab.ch/random/) on 1MB of entropy data (from `entropy_func()`) are within recommended values:
 
     Entropy = 7.999839 bits per byte.
 
