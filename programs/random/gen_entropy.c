@@ -39,28 +39,46 @@ int main( int argc, char *argv[] )
     return( 0 );
 }
 #else
+/* move these out here for CW -- "local data > 32K" */
+unsigned char buf[ENTROPY_BLOCK_SIZE];
+entropy_context entropy;
+
+#ifdef macintosh
+int main(void)
+#else
 int main( int argc, char *argv[] )
+#endif
 {
     FILE *f;
     int i, k, ret;
-    entropy_context entropy;
-    unsigned char buf[ENTROPY_BLOCK_SIZE];
-
+    
+    
+#ifdef macintosh
+	char filename[256];
+	
+	printf("Output filename: ");
+	fflush(stdout);
+	gets(filename);
+#else
+	char *filename;
+			
     if( argc < 2 )
     {
         fprintf( stderr, "usage: %s <output filename>\n", argv[0] );
         return( 1 );
     }
-
-    if( ( f = fopen( argv[1], "wb+" ) ) == NULL )
+    
+    filename = argv[1];
+#endif
+    if( ( f = fopen( filename, "wb+" ) ) == NULL )
     {
-        printf( "failed to open '%s' for writing.\n", argv[0] );
+        printf( "failed to open '%s' for writing.\n", filename );
         return( 1 );
     }
 
     entropy_init( &entropy );
 
-    for( i = 0, k = 768; i < k; i++ )
+    for( i = 0, k = 16384; i < k; i++ )
     {
         ret = entropy_func( &entropy, buf, sizeof( buf ) );
         if( ret != 0 )
@@ -71,9 +89,13 @@ int main( int argc, char *argv[] )
 
         fwrite( buf, 1, sizeof( buf ), f );
 
+#ifdef macintosh
+		printf(".");
+#else		
         printf( "Generating 32Mb of data in file '%s'... %04.1f" \
-                "%% done\r", argv[1], (100 * (float) (i + 1)) / k );
+                "%% done\r", filename, (100 * (float) (i + 1)) / k );
         fflush( stdout );
+#endif
     }
 
     ret = 0;
@@ -81,7 +103,7 @@ int main( int argc, char *argv[] )
 cleanup:
 
     fclose( f );
-
+    
     return( ret );
 }
 #endif /* POLARSSL_ENTROPY_C */
