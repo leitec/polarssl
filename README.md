@@ -56,4 +56,6 @@ and for 68K:
     Monte Carlo value for Pi is 3.139195020 (error 0.08 percent).
     Serial correlation coefficient is 0.001349 (totally uncorrelated = 0.0).
 
+(each run is different, but still in the same ballpark.)
+
 All that said, **I make absolutely no guarantees about security**.
