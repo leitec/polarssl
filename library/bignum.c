@@ -50,8 +50,8 @@
 #define CHARS_TO_LIMBS(i) (((i) + ciL - 1) / ciL)
 
 #if defined(macintosh) && defined(__powerc) && defined(__MWERKS__)
-asm void mpi_mul_hlp_powerpc_gcc(size_t i, t_uint *s, t_uint *d, t_uint b);
-#define mpi_mul_hlp mpi_mul_hlp_powerpc_gcc
+asm void mpi_mul_hlp_powerpc_ours(size_t i, t_uint *s, t_uint *d, t_uint b);
+#define mpi_mul_hlp mpi_mul_hlp_powerpc_ours
 #else
 void mpi_mul_hlp_c(size_t i, t_uint *s, t_uint *d, t_uint b);
 #define mpi_mul_hlp mpi_mul_hlp_c

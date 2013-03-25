@@ -52,6 +52,25 @@
 #define BUFSIZE         1024
 #define HEADER_FORMAT   "  %-15s :  "
 
+#define set_alarm myalarmset
+#define alarmed (time(NULL) >= alarm_time)
+
+#include <time.h>
+
+time_t alarm_init, alarm_time;
+void myalarmset(time_t secs);
+
+void myalarmset(time_t secs) {
+    time_t nt;
+    do {
+        nt = time(NULL);
+        alarm_init = time(NULL);
+    } while(nt == alarm_init);
+
+    alarm_time = alarm_init + secs;
+}
+
+
 static int myrand( void *rng_state, unsigned char *output, size_t len )
 {
     size_t use_len;
@@ -87,11 +106,6 @@ int main( int argc, char *argv[] )
     return( 0 );
 }
 #else
-int main( int argc, char *argv[] )
-{
-    int keysize;
-    unsigned long i, j, tsc;
-    unsigned char tmp[64];
 #if defined(POLARSSL_ARC4_C)
     arc4_context arc4;
 #endif
@@ -121,6 +135,13 @@ int main( int argc, char *argv[] )
 #if defined(POLARSSL_CTR_DRBG_C)
     ctr_drbg_context    ctr_drbg;
 #endif
+
+int main( int argc, char *argv[] )
+{
+    int keysize;
+    unsigned long i, j, tsc;
+    unsigned char tmp[64];
+
     ((void) argc);
     ((void) argv);
 
