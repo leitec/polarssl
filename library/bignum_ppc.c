@@ -3,6 +3,12 @@
 #include "polarssl/bignum.h"
 #include "polarssl/bn_mul.h"
 
+/*
+ * deprecated in favor of bignum_ppc.s, which I
+ * wrote by hand to eliminate needless loads/stores in
+ * the gcc-produced code. it improved performance a bit.
+ * RSA is now 2-4x faster than with plain C.
+ */
 #if 0
 /*
  * CW Pro 1 doesn't have inline assembly support.
