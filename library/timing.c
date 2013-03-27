@@ -116,6 +116,7 @@ foo:
 	bne-	foo
 	blr
 }
+
 #endif
 
 #if !defined(POLARSSL_HAVE_HARDCLOCK) && defined(POLARSSL_HAVE_ASM) && \
