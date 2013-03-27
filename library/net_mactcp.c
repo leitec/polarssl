@@ -14,6 +14,7 @@
  *   track of specific connections
  * - important: must close all connections; leaving open connections
  *   and quitting the program may result in crashes. (use mactcp_close())
+ *   Call also mactcp_shutdown().
  * - mactcp_send() and mactcp_recv() work like in BSD sockets.
  *
  * To use with PolarSSL:
@@ -236,6 +237,8 @@ OSErr mactcp_init(mactcp_inst *i)
 
 OSErr mactcp_shutdown(mactcp_inst *i)
 {
+	i->initialized = 0;
+	
     CloseResolver();
 
     return noErr;
