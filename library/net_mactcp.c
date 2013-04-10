@@ -1,7 +1,7 @@
 /*
  * This is based on code I wrote for my library 'imcomm' around 2005,
  * which was itself based on some unfinished code in PuTTY source.
- * I'm not sure where this places this code license-wise.
+ * See license below for Ben Harris's work.
  *
  * To use:
  * - need two structures, mactcp_inst and mactcp_conn
@@ -25,6 +25,32 @@
  *   net_connect(), net_close()
  *
  * -- leitec, 2013
+ */
+
+/*
+ * Copyright (c) 2003 Ben Harris
+ * All rights reserved.
+ *
+ * Permission is hereby granted, free of charge, to any person
+ * obtaining a copy of this software and associated documentation
+ * files (the "Software"), to deal in the Software without
+ * restriction, including without limitation the rights to use,
+ * copy, modify, merge, publish, distribute, sublicense, and/or
+ * sell copies of the Software, and to permit persons to whom the
+ * Software is furnished to do so, subject to the following
+ * conditions:
+ *
+ * The above copyright notice and this permission notice shall be
+ * included in all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+ * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+ * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+ * NONINFRINGEMENT.  IN NO EVENT SHALL THE AUTHORS BE LIABLE FOR
+ * ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF
+ * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
+ * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
  */
 
 #include "polarssl/net_mactcp.h"
@@ -169,9 +195,17 @@ OSErr mactcp_connect(mactcp_inst *i, mactcp_conn *c, char *hostname, short port)
 		return err;
 	}
 	
+        /*
+         * this is broken on my PM7500 w/ 7.6.1 
+         * the MTU returned is always absurdly high
+         */
+#if 0
 	buflen = upb.csParam.mtu.mtuSize * 4 + 1024;
 	if(buflen < 4096)
 		buflen = 4096;
+#else
+        buflen = 4096;
+#endif
 		
 	pb.ioCRefNum = i->refnum;
 	pb.csCode = TCPCreate;
