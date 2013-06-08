@@ -105,6 +105,7 @@ unsigned long hardclock( void )
 
 #define POLARSSL_HAVE_HARDCLOCK
 
+#if 0
 asm unsigned long hardclock(void)
 {
 	machine	603
@@ -116,6 +117,20 @@ foo:
 	bne-	foo
 	blr
 }
+#else
+
+/*
+ * Since we're just getting back a 32-bit long, I'm not sure
+ * why we'd have to get the upper 32 bits as well
+ */
+asm unsigned long hardclock(void)
+{
+	machine 603
+foo:
+	mftb	r3
+	blr
+}
+#endif
 
 #endif
 
