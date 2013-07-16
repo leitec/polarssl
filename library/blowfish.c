@@ -625,5 +625,5 @@ int blowfish_crypt_ctr( blowfish_context *ctx,
     return( 0 );
 }
 #endif /* POLARSSL_CIPHER_MODE_CTR */
-
+#endif /* !POLARSSL_BLOWFISH_ALT */
 #endif /* POLARSSL_BLOWFISH_C */

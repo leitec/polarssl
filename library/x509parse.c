@@ -88,6 +88,7 @@
 #include <dirent.h>
 #endif
 #endif
+#endif
 
 /* Compare a given OID string with an OID x509_buf * */
 #define OID_CMP(oid_str, oid_buf) \
@@ -2105,7 +2106,7 @@ static int x509parse_key_pkcs1_der( rsa_context *rsa,
 
     p = (unsigned char *) key;
     end = p + keylen;
-
+	
     /*
      * This function parses the RSAPrivateKey (PKCS#1)
      *
