@@ -1,7 +1,7 @@
 /*
  *  Blowfish implementation
  *
- *  Copyright (C) 2012-2012, Brainspark B.V.
+ *  Copyright (C) 2012-2013, Brainspark B.V.
  *
  *  This file is part of PolarSSL (http://www.polarssl.org)
  *  Lead Maintainer: Paul Bakker <polarssl_maintainer at polarssl.org>
@@ -34,6 +34,8 @@
 #if defined(POLARSSL_BLOWFISH_C)
 
 #include "polarssl/blowfish.h"
+
+#if !defined(POLARSSL_BLOWFISH_ALT)
 
 /*
  * 32-bit integer manipulation macros (big endian)
