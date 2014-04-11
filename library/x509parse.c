@@ -1841,16 +1841,27 @@ int x509parse_crl( x509_crl *chain, const unsigned char *buf, size_t buflen )
 int load_file( const char *path, unsigned char **buf, size_t *n )
 {
     FILE *f;
+    long size;
 
     if( ( f = fopen( path, "rb" ) ) == NULL )
         return( POLARSSL_ERR_X509_FILE_IO_ERROR );
 
     fseek( f, 0, SEEK_END );
-    *n = (size_t) ftell( f );
+    if( ( size = ftell( f ) ) == -1 )
+    {
+        fclose( f );
+        return( POLARSSL_ERR_X509_FILE_IO_ERROR );
+    }
     fseek( f, 0, SEEK_SET );
 
-    if( ( *buf = (unsigned char *) malloc( *n + 1 ) ) == NULL )
+    *n = (size_t) size;
+
+    if( *n + 1 == 0 ||
+        ( *buf = (unsigned char *) malloc( *n + 1 ) ) == NULL )
+    {
+        fclose( f );
         return( POLARSSL_ERR_X509_MALLOC_FAILED );
+    }
 
     if( fread( *buf, 1, *n, f ) != *n )
     {
@@ -2009,7 +2020,10 @@ cleanup:
         i = stat( entry_name, &sb );
 
         if( i == -1 )
+        {
+            closedir( dir );
             return( POLARSSL_ERR_X509_FILE_IO_ERROR );
+        }
 
         if( !S_ISREG( sb.st_mode ) )
             continue;
@@ -3273,7 +3287,7 @@ static int x509parse_verifycrl(x509_cert *crt, x509_cert *ca,
 
         x509_hash( crl_list->tbs.p, crl_list->tbs.len, hash_id, hash );
 
-        if( !rsa_pkcs1_verify( &ca->rsa, RSA_PUBLIC, hash_id,
+        if( !rsa_pkcs1_verify( &ca->rsa, NULL, NULL, RSA_PUBLIC, hash_id,
                               0, hash, crl_list->sig.p ) == 0 )
         {
             /*
@@ -3303,6 +3317,29 @@ static int x509parse_verifycrl(x509_cert *crt, x509_cert *ca,
     return flags;
 }
 
+// Equal == 0, inequal == 1
+static int x509_name_cmp( const void *s1, const void *s2, size_t len )
+{
+    size_t i;
+    unsigned char diff;
+    const unsigned char *n1 = s1, *n2 = s2;
+
+    for( i = 0; i < len; i++ )
+    {
+        diff = n1[i] ^ n2[i];
+
+        if( ( n1[i] >= 'a' || n1[i] <= 'z' ) && ( diff == 0 || diff == 32 ) )
+            continue;
+
+        if( ( n1[i] >= 'A' || n1[i] <= 'Z' ) && ( diff == 0 || diff == 32 ) )
+            continue;
+
+        return( 1 );
+    }
+
+    return( 0 );
+}
+
 int x509_wildcard_verify( const char *cn, x509_buf *name )
 {
     size_t i;
@@ -3324,7 +3361,7 @@ int x509_wildcard_verify( const char *cn, x509_buf *name )
         return( 0 );
 
     if( strlen( cn ) - cn_idx == name->len - 1 &&
-        memcmp( name->p + 1, cn + cn_idx, name->len - 1 ) == 0 )
+        x509_name_cmp( name->p + 1, cn + cn_idx, name->len - 1 ) == 0 )
     {
         return( 1 );
     }
@@ -3383,7 +3420,7 @@ static int x509parse_verify_top(
 
         x509_hash( child->tbs.p, child->tbs.len, hash_id, hash );
 
-        if( rsa_pkcs1_verify( &trust_ca->rsa, RSA_PUBLIC, hash_id,
+        if( rsa_pkcs1_verify( &trust_ca->rsa, NULL, NULL, RSA_PUBLIC, hash_id,
                     0, hash, child->sig.p ) != 0 )
         {
             trust_ca = trust_ca->next;
@@ -3450,8 +3487,8 @@ static int x509parse_verify_child(
 
     x509_hash( child->tbs.p, child->tbs.len, hash_id, hash );
 
-    if( rsa_pkcs1_verify( &parent->rsa, RSA_PUBLIC, hash_id, 0, hash,
-                           child->sig.p ) != 0 )
+    if( rsa_pkcs1_verify( &parent->rsa, NULL, NULL, RSA_PUBLIC, hash_id, 0,
+                           hash, child->sig.p ) != 0 )
         *flags |= BADCERT_NOT_TRUSTED;
         
     /* Check trusted CA's CRL for the given crt */
@@ -3481,7 +3518,7 @@ static int x509parse_verify_child(
         ret = x509parse_verify_child( parent, grandparent, trust_ca, ca_crl, path_cnt + 1, &parent_flags, f_vrfy, p_vrfy );
         if( ret != 0 )
             return( ret );
-    } 
+    }
     else
     {
         ret = x509parse_verify_top( parent, trust_ca, ca_crl, path_cnt + 1, &parent_flags, f_vrfy, p_vrfy );
@@ -3530,7 +3567,7 @@ int x509parse_verify( x509_cert *crt,
             while( cur != NULL )
             {
                 if( cur->buf.len == cn_len &&
-                    memcmp( cn, cur->buf.p, cn_len ) == 0 )
+                    x509_name_cmp( cn, cur->buf.p, cn_len ) == 0 )
                     break;
 
                 if( cur->buf.len > 2 &&
@@ -3552,7 +3589,7 @@ int x509parse_verify( x509_cert *crt,
                     memcmp( name->oid.p, OID_CN,  3 ) == 0 )
                 {
                     if( name->val.len == cn_len &&
-                        memcmp( name->val.p, cn, cn_len ) == 0 )
+                        x509_name_cmp( name->val.p, cn, cn_len ) == 0 )
                         break;
 
                     if( name->val.len > 2 &&
@@ -3817,7 +3854,6 @@ int x509_self_test( int verbose )
     ret = x509parse_verify( &clicert, &cacert, NULL, "PolarSSL Client 2", &flags, NULL, NULL );
     if( ret != 0 )
     {
-        printf("%02x", flags);
         if( verbose != 0 )
             printf( "failed\n" );
 

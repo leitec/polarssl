@@ -65,12 +65,14 @@ int (*ssl_hw_record_read)(ssl_context *ssl) = NULL;
 int (*ssl_hw_record_finish)(ssl_context *ssl) = NULL;
 #endif
 
-static int ssl_rsa_decrypt( void *ctx, int mode, size_t *olen,
+static int ssl_rsa_decrypt( void *ctx,
+                        int (*f_rng)(void *, unsigned char *, size_t),
+                        void *p_rng, int mode, size_t *olen,
                         const unsigned char *input, unsigned char *output,
                         size_t output_max_len )
 {
-    return rsa_pkcs1_decrypt( (rsa_context *) ctx, mode, olen, input, output,
-                              output_max_len );
+    return rsa_pkcs1_decrypt( (rsa_context *) ctx, f_rng, p_rng, mode, olen,
+                              input, output, output_max_len );
 }
 
 static int ssl_rsa_sign( void *ctx,
@@ -2345,6 +2347,13 @@ int ssl_parse_certificate( ssl_context *ssl )
         return( POLARSSL_ERR_SSL_BAD_HS_CERTIFICATE );
     }
 
+    /* In case we tried to reuse a session but it failed */
+    if( ssl->session_negotiate->peer_cert != NULL )
+    {
+        x509_free( ssl->session_negotiate->peer_cert );
+        free( ssl->session_negotiate->peer_cert );
+    }
+
     if( ( ssl->session_negotiate->peer_cert = (x509_cert *) malloc(
                     sizeof( x509_cert ) ) ) == NULL )
     {
@@ -3239,6 +3248,10 @@ int ssl_set_hostname( ssl_context *ssl, const char *hostname )
         return( POLARSSL_ERR_SSL_BAD_INPUT_DATA );
 
     ssl->hostname_len = strlen( hostname );
+
+    if( ssl->hostname_len + 1 == 0 )
+        return( POLARSSL_ERR_SSL_BAD_INPUT_DATA );
+
     ssl->hostname = (unsigned char *) malloc( ssl->hostname_len + 1 );
 
     if( ssl->hostname == NULL )
@@ -3246,7 +3259,7 @@ int ssl_set_hostname( ssl_context *ssl, const char *hostname )
 
     memcpy( ssl->hostname, (const unsigned char *) hostname,
             ssl->hostname_len );
-    
+
     ssl->hostname[ssl->hostname_len] = '\0';
 
     return( 0 );
@@ -3506,6 +3519,50 @@ int ssl_get_ciphersuite_id( const char *ciphersuite_name )
 #endif /* defined(POLARSSL_ENABLE_WEAK_CIPHERSUITES) */
 
     return( 0 );
+}
+
+int ssl_get_ciphersuite_min_version( const int ciphersuite_id )
+{
+    switch( ciphersuite_id )
+    {
+        case TLS_RSA_WITH_RC4_128_MD5:
+        case TLS_RSA_WITH_RC4_128_SHA:
+        case TLS_RSA_WITH_3DES_EDE_CBC_SHA:
+        case TLS_DHE_RSA_WITH_3DES_EDE_CBC_SHA:
+        case TLS_RSA_WITH_AES_128_CBC_SHA:
+        case TLS_DHE_RSA_WITH_AES_128_CBC_SHA:
+        case TLS_RSA_WITH_AES_256_CBC_SHA:
+        case TLS_DHE_RSA_WITH_AES_256_CBC_SHA:
+        case TLS_RSA_WITH_CAMELLIA_128_CBC_SHA:
+        case TLS_DHE_RSA_WITH_CAMELLIA_128_CBC_SHA:
+        case TLS_RSA_WITH_CAMELLIA_256_CBC_SHA:
+        case TLS_DHE_RSA_WITH_CAMELLIA_256_CBC_SHA:
+        case TLS_RSA_WITH_NULL_MD5:
+        case TLS_RSA_WITH_NULL_SHA:
+        case TLS_RSA_WITH_DES_CBC_SHA:
+        case TLS_DHE_RSA_WITH_DES_CBC_SHA:
+            return SSL_MINOR_VERSION_0;
+
+        case TLS_RSA_WITH_AES_128_CBC_SHA256:
+        case TLS_RSA_WITH_AES_256_CBC_SHA256:
+        case TLS_DHE_RSA_WITH_AES_128_CBC_SHA256:
+        case TLS_DHE_RSA_WITH_AES_256_CBC_SHA256:
+        case TLS_RSA_WITH_AES_128_GCM_SHA256:
+        case TLS_RSA_WITH_AES_256_GCM_SHA384:
+        case TLS_DHE_RSA_WITH_AES_128_GCM_SHA256:
+        case TLS_DHE_RSA_WITH_AES_256_GCM_SHA384:
+        case TLS_RSA_WITH_CAMELLIA_128_CBC_SHA256:
+        case TLS_DHE_RSA_WITH_CAMELLIA_128_CBC_SHA256:
+        case TLS_RSA_WITH_CAMELLIA_256_CBC_SHA256:
+        case TLS_DHE_RSA_WITH_CAMELLIA_256_CBC_SHA256:
+        case TLS_RSA_WITH_NULL_SHA256:
+            return SSL_MINOR_VERSION_3;
+
+        default:
+            break;
+    }
+
+    return SSL_MINOR_VERSION_0;
 }
 
 const char *ssl_get_ciphersuite( const ssl_context *ssl )

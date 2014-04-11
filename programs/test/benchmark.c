@@ -460,7 +460,7 @@ int main( int argc, char *argv[] )
     for( i = 1; ! alarmed; i++ )
     {
         buf[0] = 0;
-        rsa_private( &rsa, buf, buf );
+        rsa_private( &rsa, myrand, NULL, buf, buf );
     }
 
     printf( "%9lu private/s\n", i / 3 );
@@ -489,7 +489,7 @@ int main( int argc, char *argv[] )
     for( i = 1; ! alarmed; i++ )
     {
         buf[0] = 0;
-        rsa_private( &rsa, buf, buf );
+        rsa_private( &rsa, myrand, NULL, buf, buf );
     }
 
     printf( "%9lu private/s\n", i / 3 );
@@ -518,7 +518,7 @@ int main( int argc, char *argv[] )
     for( i = 1; ! alarmed; i++ )
     {
         buf[0] = 0;
-        rsa_private( &rsa, buf, buf );
+        rsa_private( &rsa, myrand, NULL, buf, buf );
     }
 
     printf( "%9lu private/s\n", i / 3 );
