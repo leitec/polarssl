@@ -53,7 +53,7 @@
 asm void mpi_mul_hlp_powerpc_ours(size_t i, t_uint *s, t_uint *d, t_uint b);
 #define mpi_mul_hlp mpi_mul_hlp_powerpc_ours
 #else
-void mpi_mul_hlp_c(size_t i, t_uint *s, t_uint *d, t_uint b);
+static void mpi_mul_hlp_c(size_t i, t_uint *s, t_uint *d, t_uint b);
 #define mpi_mul_hlp mpi_mul_hlp_c
 #endif
 
