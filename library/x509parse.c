@@ -2040,6 +2040,7 @@ cleanup:
 #endif
 #endif
 
+    return ret;
 }
 
 /*
