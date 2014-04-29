@@ -10,11 +10,11 @@ Some of the incompatibilities are handled through a library of mine, [libcompat]
 
 Mac-specific things
 -------------------
-- [X] MacTCP client sockets using our `net_mactcp` module
-- [X] MacOS-specific file handling for X.509 certs (untested; may have problems with ':' separators instead of '/')
-- [X] HAVEGE using processor ticks for PowerPC (may need 603 or higher) or OS ticks for 68k. (see below)
-- [X] ASM-accelerated bignum on PowerPC
-- [X] ASM-accelerated bignum on 68k (68020+ only)
+- [x] MacTCP client sockets using our `net_mactcp` module
+- [x] MacOS-specific file handling for X.509 certs (untested; may have problems with ':' separators instead of '/')
+- [x] HAVEGE using processor ticks for PowerPC (may need 603 or higher) or OS ticks for 68k. (see below)
+- [x] ASM-accelerated bignum on PowerPC
+- [x] ASM-accelerated bignum on 68k (68020+ only)
 - [ ] MacTCP server sockets
 - [ ] timing stuff (alarms, etc.) that I'm not sure are used for anything other than benchmarks
 
