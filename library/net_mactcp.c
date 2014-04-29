@@ -142,7 +142,7 @@ int mactcp_recv(void *vc, unsigned char *inbuf, size_t len)
 	pb.ioCRefNum = c->i->refnum;
 	pb.csCode = TCPRcv;
 	pb.tcpStream = c->s;
-	pb.csParam.receive.commandTimeoutValue = 2;
+	pb.csParam.receive.commandTimeoutValue = 10;
 	pb.csParam.receive.rcvBuff = (char *)inbuf;
 	pb.csParam.receive.rcvBuffLen = len;
 	
