@@ -53,9 +53,11 @@
 #ifdef __powerc
 asm void mpi_mul_hlp_powerpc_ours(size_t i, t_uint *s, t_uint *d, t_uint b);
 #define mpi_mul_hlp mpi_mul_hlp_powerpc_ours
+#define WE_HAVE_ASM
 #else
 asm void mpi_mul_hlp_68k(size_t i, t_uint *s, t_uint *d, t_uint b);
 #define mpi_mul_hlp mpi_mul_hlp_68k
+#define WE_HAVE_ASM
 #endif
 #else
 static void mpi_mul_hlp_c(size_t i, t_uint *s, t_uint *d, t_uint b);
@@ -948,6 +950,7 @@ int mpi_sub_int( mpi *X, const mpi *A, t_sint b )
 /*
  * Helper for mpi multiplication
  */
+#ifndef WE_HAVE_ASM
 static
 #if defined(__APPLE__) && defined(__arm__)
 /*
@@ -1016,6 +1019,7 @@ void mpi_mul_hlp_c( size_t i, t_uint *s, t_uint *d, t_uint b )
     }
     while( c != 0 );
 }
+#endif
 
 /*
  * Baseline multiplication: X = A * B  (HAC 14.12)
