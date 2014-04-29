@@ -1,3 +1,12 @@
+// This is a mix of the 68020 assembly code in bn_mul.h,
+// fed through NetBSD/mac68k GCC, and adapted to work with
+// CodeWarrior and MacOS. There is one further optimization,
+// which is to not store/fetch registers in RAM after every
+// iteration of the loop (a consequence of the mixed C/ASM in the
+// original)
+//
+// -leitec, 2014
+
 #include "polarssl/config.h"
 #include "polarssl/bignum.h"
 #include "polarssl/bn_mul.h"
