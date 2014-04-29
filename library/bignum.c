@@ -49,9 +49,14 @@
 #define BITS_TO_LIMBS(i)  (((i) + biL - 1) / biL)
 #define CHARS_TO_LIMBS(i) (((i) + ciL - 1) / ciL)
 
-#if defined(macintosh) && defined(__powerc) && defined(__MWERKS__)
+#if defined(macintosh) && defined(__MWERKS__)
+#ifdef __powerc
 asm void mpi_mul_hlp_powerpc_ours(size_t i, t_uint *s, t_uint *d, t_uint b);
 #define mpi_mul_hlp mpi_mul_hlp_powerpc_ours
+#else
+asm void mpi_mul_hlp_68k(size_t i, t_uint *s, t_uint *d, t_uint b);
+#define mpi_mul_hlp mpi_mul_hlp_68k
+#endif
 #else
 static void mpi_mul_hlp_c(size_t i, t_uint *s, t_uint *d, t_uint b);
 #define mpi_mul_hlp mpi_mul_hlp_c

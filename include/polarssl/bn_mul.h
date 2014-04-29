@@ -815,7 +815,7 @@
 #endif /* POLARSSL_HAVE_ASM */
 
 #if !defined(MULADDC_CORE)
-#if defined(POLARSSL_HAVE_UDBL)
+#if defined(X_POLARSSL_HAVE_UDBL)
 
 #define MULADDC_INIT                    \
 {                                       \
