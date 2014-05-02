@@ -17,17 +17,16 @@ asm void mpi_mul_hlp_68k(int i, t_uint *s, t_uint *d, t_uint b)
 {
 	machine 68020
 	
-	link	 a6,#-28
+	link	 a6,#0
 	movem.l  d3-d7/a2-a4,-(a7)
 	
 	// hand-tune: don't keep writing/fetching these from RAM
 	// with each iteration of the loop
-	clr.l	-28(a6)		// c
 	move.l	  8(a6), d5	// i
 	movea.l	 12(a6), a2	// s
 	movea.l	 16(a6), a3	// d
-	move.l	-28(a6), d3	// c
 	move.l	 20(a6), d0	// b
+	moveq	 #0, d3		// c
 
 	// check if we need to run this loop (size >= 8)
 	moveq	 #7, d7
